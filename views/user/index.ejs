@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('../layouts/page_import') %> 
+</head>
+<script>
+    function openListUser() {
+        $.ajax({
+            method: 'get',
+            url: '/api/user/listAllUser',
+            success: function (data,status,xhr){
+                $('#left-col').html(generateUserTable(data.users))
+            },
+            error: function (xhr,status,err) {
+
+            }
+        })
+    }
+    function openUserInfo(userId){
+        $.ajax({
+            type: 'get',
+            url: '/api/user/get',
+            data: {id : userId},
+            success: function(data,status,xhr){
+                $('#right-col').html(generateUserInfo(data))
+            },
+            error: function(xhr,status,err){
+
+            }
+        })
+    }
+    function deleteUser(userId){
+        console.log(userId)
+         $.ajax({
+            type: 'delete',
+            url: '/api/user/delete',
+            data: {id : userId},
+            success: function(data,status,xhr){
+                console.log(xhr)
+                openListUser()
+            },
+            error: function(xhr,status,err){
+                console.log(err)
+            }
+        })
+    }
+    function generateUserInfo(user){
+        console.log(user)
+        let html = ""
+        html += `<p>User name: ${user.name}</p>`
+        html += `<p>Last Online: ${user.recentLoginTime}</p>`
+        if(user.gameData == null || user.gameData.length == 0){
+            html += `<p>Game data: empty</p>`
+            return html
+        }
+        html += `<p>Game data: ${user.gameData.length}</p>`
+        user.gameData.forEach(function(data){
+            html += `<p>id: ${data._id}</p>`
+            html += `<p>-- coin: ${data.data.coin}</p>`
+            html += `<p>-- star: ${data.data.star}</p>`
+        })
+        return html
+    }
+    function generateUserTable(listUsers) {
+        let html = "<table>"
+        html += "<tr>"
+            html += "<th>id</th>"
+            html += "<th>name</th>"
+            html += "<th></th>"
+            html += "<th></th>"
+        html += "</tr>"
+
+        listUsers.forEach(function(user){
+            html+="<tr>"
+                    html+=`<td>${user._id}</td>`
+                    html+=`<td>${user.name}</td>`
+                    html+=`<td><button onclick="openUserInfo('${user._id}')">info</button></td>`
+                    html+=`<td><button onclick="deleteUser('${user._id}')">delete</button></td>`
+            html+="</tr>"
+        })
+        html += "</table>"
+        return html
+    }
+    function createUser(){
+        let userName = $('#input-username').val()
+        $.ajax({
+            type:'post',
+            url:'/api/user/create',
+            data: {name: userName},
+            success: function(data,status,xhr){
+                openListUser()
+            },
+            error: function(xhr,status,err) {
+
+            }
+        })
+    }
+    function openCreateUserPanel() {
+        let html = "<form>"
+            html += `<input type="text" name="name" id="input-username" />`
+            html += `<button onclick="createUser()">Create</button>`
+            html += `<button onclick="$('#create-panel').html('')">Close</button>`
+            html += `</form>`
+        $('#create-panel').html(html)
+    }
+</script>
+    
+<body>
+    <%- include('../layouts/navigator') %> 
+    <div>
+        <h3>User Manager</h3>
+        <button onclick="openListUser()">list user</button>
+        <button onclick="openCreateUserPanel()">create user</button>
+    </div>
+    <div class="container-fluid">
+        <div class="row" id="create-panel">
+
+        </div>
+        <div class="row">
+            <div class="col-md-6" id="left-col">
+
+            </div>
+            <div class="col-md-6" id="right-col"></div>
+        </div>
+    </div>
+</body>
+</html>

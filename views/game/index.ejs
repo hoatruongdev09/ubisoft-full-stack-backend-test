@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('../layouts/page_import') %> 
+</head>
+<script>
+    function openListGame() {
+        $.ajax({
+            method: 'get',
+            url: '/api/game/listAllGame',
+            success: function (data,status,xhr){
+                console.log(data)
+                $('#left-col').html(generateGameTable(data.games))
+            },
+            error: function (xhr,status,err) {
+
+            }
+        })
+    }
+    function generateGameTable(listGames) {
+        let html = "<table>"
+        html += "<tr>"
+            html += "<th>id</th>"
+            html += "<th>name</th>"
+            html += "<th></th>"
+            html += "<th></th>"
+        html += "</tr>"
+
+        listGames.forEach(function(game){
+            html+="<tr>"
+                html+=`<td>${game._id}</td>`
+                html+=`<td>${game.name}</td>`
+                html+=`<td><button onclick="openGameInfo('${game._id}')">info</button></td>`
+                html+=`<td><button onclick="deleteGame('${game._id}')">delete</button></td>`
+            html+="</tr>"
+        })
+        html += "</table>"
+        return html
+    }
+    function openGameInfo(gameId){
+        $.ajax({
+            type: 'get',
+            url: '/api/game/info',
+            data: {id : gameId},
+            success: function(data,status,xhr){
+                console.log(data)
+                $('#right-col').html(generateGameInfo(data))
+            },
+            error: function(xhr,status,err){
+
+            }
+        })
+    }
+    function generateGameInfo(game){
+        let html = ""
+            html += `<p>Name: ${game.name}</p>`
+            html += `<p>initial Data:</p>`
+            html += `<p>-- coin: ${game.initialData.coin}</p>`
+            html += `<p>-- coin: ${game.initialData.star}</p>`
+            if(game.happeningEvent.length == 0) {
+                html += `<p>happening event: empty</p>`
+            } else {
+                html += `<p>happening event: ${game.happeningEvent.length}</p>`
+                game.happeningEvent.forEach(function(event){
+                    html += `<p>-- id: ${event._id}, name: ${event.name}</p>`
+                html += `<p>-- start date ${event.startDate}, end date: ${event.endDate} </p>`
+                })
+            }
+            if(game.comingUpEvent.length == 0) {
+                html += `<p>coming up event: empty</p>`
+            } else {
+                html += `<p>coming event: ${game.comingUpEvent.length}</p>`
+                game.comingUpEvent.forEach(function(event){
+                    html += `<p>-- id: ${event._id}, name: ${event.name}</p>`
+                    html += `<p>-- start date ${event.startDate}, end date: ${event.endDate} </p>`
+                })
+            }
+        return html
+    }
+    function deleteGame(gameId){
+         $.ajax({
+            type: 'delete',
+            url: '/api/game/delete',
+            data: {id : gameId},
+            success: function(data,status,xhr){
+                console.log(xhr)
+                openListGame()
+            },
+            error: function(xhr,status,err){
+                console.log(err)
+            }
+        })
+    }
+    function openCreateGamePanel() {
+
+    }
+</script>
+<body>
+    <%- include('../layouts/navigator') %> 
+    <div>
+        <h3>Game Manager</h3>
+        <button onclick="openListGame()">list game</button>
+        <button onclick="openCreateGamePanel()">create game</button>
+    </div>
+    <div class="container-fluid">
+        <div class="row" id="create-panel">
+
+        </div>
+        <div class="row">
+            <div class="col-md-6" id="left-col">
+
+            </div>
+            <div class="col-md-6" id="right-col"></div>
+        </div>
+    </div>
+</body>
+</html>
