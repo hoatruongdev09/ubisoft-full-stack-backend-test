@@ -7,7 +7,7 @@ const Game = require('../../models/game')
 
 router.post('/create', async (request, response, next) => {
     const name = request.body.name
-    if (name == "" || name == null) {
+    if (!name) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
@@ -31,13 +31,13 @@ router.post('/create', async (request, response, next) => {
 })
 router.get('/get', async (request, response, next) => {
     const userId = request.query.id
-    if (userId == "" || userId == null) {
+    if (!userId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         const user = await User.findById(userId)
-        if (user == null) {
+        if (!user) {
             response.status(404).json({ message: "user not found" })
             return
         }
@@ -53,13 +53,13 @@ router.get('/get', async (request, response, next) => {
 })
 router.delete('/delete', async (request, response, next) => {
     const userId = request.body.id
-    if (userId == "" || userId == null) {
+    if (!userId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         const user = await User.findById(userId)
-        if (user == null) {
+        if (!user) {
             response.status(404).json({ message: "user not found" })
             return
         }
@@ -83,17 +83,17 @@ router.get('/listAllUser', async (request, response, next) => {
 router.post('/registerGame', async (request, response, next) => {
     const userId = request.body.userId
     const gameId = request.body.gameId
-    if (userId == "" || userId == null || gameId == "" || gameId == null) {
+    if (!userId || !gameId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         let user = await User.findById(userId)
-        if (user == null || !user.enable) {
+        if (!user || !user.enable) {
             response.status(404).json({ message: "user is not found" })
             return
         }
-        if (user.gamesData == null) { user.gamesData = [] }
+        if (!user.gamesData) { user.gamesData = [] }
         console.log(user.gamesData)
         let gameData = user.gamesData.find(game => game._id == gameId)
         if (gameData) {
@@ -128,17 +128,17 @@ router.patch('/updateUserGameData', async (request, response, next) => {
     const userId = request.body.userId
     const gameId = request.body.gameId
     const gameData = request.body.gameData
-    if (userId == "" || userId == null || gameId == "" || gameId == null || gameData == "" || gameData == null) {
+    if (!userId || !gameId || !gameData) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         let user = await User.findById(userId)
-        if (user == null || !user.enable) {
+        if (!user || !user.enable) {
             response.status(404).json({ message: "user not found" })
             return
         }
-        if (user.gamesData == null || user.gamesData.length == 0) {
+        if (!user.gamesData || user.gamesData.length == 0) {
             user.gamesData = []
             user.gamesData.push({ _id: new mongoose.Types.ObjectId(gameId), data: gameData })
             await user.save()
@@ -169,7 +169,7 @@ router.patch('/updateUserGameData', async (request, response, next) => {
 router.get('/getUserGameData', async (request, response, next) => {
     const userId = request.query.userId
     const gameId = request.query.gameId
-    if (userId == "" || userId == null || gameId == "" || gameId == null) {
+    if (!userId || !gameId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }

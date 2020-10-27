@@ -27,6 +27,7 @@
             html += "<th>name</th>"
             html += "<th></th>"
             html += "<th></th>"
+            html += "<th></th>"
         html += "</tr>"
 
         listGames.forEach(function(game){
@@ -35,10 +36,49 @@
                 html+=`<td>${game.name}</td>`
                 html+=`<td><button onclick="openGameInfo('${game._id}')">info</button></td>`
                 html+=`<td><button onclick="deleteGame('${game._id}')">delete</button></td>`
+                html+=`<td><button onclick="createGameEvent('${game._id}')">create event</button></td>`
             html+="</tr>"
         })
         html += "</table>"
         return html
+    }
+    function createGameEvent(gameId){
+        let html = ""
+            html += `<div>`
+                html += `<input type="hidden" name="input-gameId" id="input-gameId" value="${gameId}"/> <br>`
+                html += `event name: <input type="text" name="input-gameName" id="input-eventName"/> <br>`
+                html += `start date: <input type="date" name="input-startDate" id="input-startDate"/> <br>`
+                html += `end date:<input type="date" name="input-endDate" id="input-endDate"/> <br>`
+                html += `reward star:<input type="number" name="input-rewardStar" id="input-rewardStar"/> <br>`
+                html += `<button onclick="createNewEvent()">Create</button>`
+                html += `<button onclick="$('#right-col').html('')">Close</button>`
+            html += `</div>`
+        $('#right-col').html(html)
+    }
+    function createNewEvent() {
+        let gameId = $('#input-gameId').val()
+        let eventName = $('#input-eventName').val()
+        let startDate = $('#input-startDate').val()
+        let endDate = $('#input-endDate').val()
+        let rewardStar = $('#input-rewardStar').val()
+        let name = $('#input-eventName').val()
+        $.ajax({
+            type: 'post',
+            url: '/api/event/create',
+            data: {
+                name: name,
+                gameId: gameId,
+                startDate: startDate,
+                endDate: endDate,
+                rewardStar: rewardStar
+            },
+            success: function(data, status,xhr){
+                openGameInfo(gameId)
+            },
+            error: function(xhr,status,err){
+                console.log(xhr)
+            }
+        })
     }
     function openGameInfo(gameId){
         $.ajax({
@@ -94,9 +134,43 @@
             }
         })
     }
-    function openCreateGamePanel() {
-
+    function createGame() {
+        let name = $('#input-gameName').val()
+        let coin = $('#input-coin').val()
+        let star = $('#input-star').val()
+        console.log(`${coin}; ${star}`)
+        $.ajax({
+            type: 'post',
+            url: '/api/game/create',
+            dataType: 'JSON',
+            data:{
+                name: name,
+                initialData: JSON.stringify( {
+                    coin: coin,
+                    star: star
+                })
+            },
+            success: function(data,status,xhr){
+                openListGame()
+            },
+            error:function(xhr,status,err){
+                console.log(xhr)
+                console.log(err)
+            }
+        })
     }
+    
+    function openCreateGamePanel() {
+        let html = ""
+            html += `<div>`
+                html += `game name: <input type="text" name="input-gameName" id="input-gameName"/> <br>`
+                html += `initial coin: <input type="number" name="input-coin" id="input-coin"/> <br>`
+                html += `initial star:<input type="number" name="input-star" id="input-star"/> <br>`
+                html += `<button onclick="createGame()">Create</button>`
+                html += `<button onclick="$('#create-panel').html('')">Close</button>`
+            html += `</div>`
+        $('#create-panel').html(html)
+    }  
 </script>
 <body>
     <%- include('../layouts/navigator') %> 

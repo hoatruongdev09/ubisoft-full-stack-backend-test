@@ -9,13 +9,13 @@ const User = require('../../models/user')
 router.get('/rewardPlayer', async (request, response, next) => {
     const userId = request.query.userId
     const eventId = request.query.eventId
-    if (userId == '' || eventId == '' || userId == null || eventId == null) {
+    if (!userId || !userId) {
         response.status(400).json({ message: "parameter not valid" })
         return
     }
     try {
         const event = await Event.findById(eventId)
-        if (event == null || !event.enable) {
+        if (!event || !event.enable) {
             response.status(404).json({ message: "event is not found" })
             return
         }
@@ -24,11 +24,11 @@ router.get('/rewardPlayer', async (request, response, next) => {
             return
         }
         const user = await User.findById(userId)
-        if (user == null || !user.enable) {
+        if (!user || !user.enable) {
             response.status(404).json({ message: "user is not found" })
             return
         }
-        if (event.rewardedUsers == null) { event.rewardedUsers = [] }
+        if (!event.rewardedUsers) { event.rewardedUsers = [] }
         if (event.rewardedUsers.includes(userId)) {
             response.status(400).json({ message: "user received the reward" })
             return
@@ -43,7 +43,7 @@ router.get('/rewardPlayer', async (request, response, next) => {
                 break
             }
         }
-        if (game == null) {
+        if (!game) {
             response.status(400).json({ message: "user didn't play this game" })
             return
         }
@@ -68,13 +68,13 @@ router.get('/rewardPlayer', async (request, response, next) => {
 
 router.get('/get', async (request, response, next) => {
     const eventId = request.query.eventId
-    if (eventId == "" || eventId == null) {
+    if (!eventId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         const event = await Event.findById(eventId)
-        if (event == null || !event.enable) {
+        if (!event || !event.enable) {
             response.status(404).json({ message: "Event is not found" })
             return
         }
@@ -85,13 +85,13 @@ router.get('/get', async (request, response, next) => {
 })
 router.delete('/delete', async (request, response, next) => {
     const eventId = request.body.eventId
-    if (eventId == "" || eventId == null) {
+    if (!eventId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         const event = await Event.findById(eventId)
-        if (event == null || !event.enable) {
+        if (!event || !event.enable) {
             response.status(404).json({ message: "Event is not found" })
             return
         }
@@ -107,7 +107,9 @@ router.post('/create', async (request, response, next) => {
     const startDate = request.body.startDate
     const endDate = request.body.endDate
     const rewardStar = request.body.rewardStar
-    if (gameId == null || gameId == null || endDate == "" || endDate == null || rewardStar == "" || rewardStar == null) {
+    const name = request.body.name
+    console.log(`${name} ${rewardStar} ${startDate} ${endDate} ${gameId}`)
+    if (!gameId || !endDate || !rewardStar || !name) {
         response.status(400).json({ message: "parameter not valid" })
         return
     }
@@ -123,7 +125,7 @@ router.post('/create', async (request, response, next) => {
         }
         const event = {
             _id: new mongoose.Types.ObjectId(),
-            name: request.body.name,
+            name: name,
             game: gameId,
             startDate: (startDate == "" || startDate == null) ? new Date(Date.now()).toISOString() : new Date(startDate).toISOString(),
             endDate: new Date(endDate).toISOString(),

@@ -99,11 +99,11 @@
         })
     }
     function openCreateUserPanel() {
-        let html = "<form>"
-            html += `<input type="text" name="name" id="input-username" />`
+        let html = "<div>"
+            html += `user name: <input type="text" name="name" id="input-username" /> <br>`
             html += `<button onclick="createUser()">Create</button>`
             html += `<button onclick="$('#create-panel').html('')">Close</button>`
-            html += `</form>`
+            html += `</div>`
         $('#create-panel').html(html)
     }
 </script>

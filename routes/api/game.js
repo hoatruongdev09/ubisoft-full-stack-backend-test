@@ -18,7 +18,7 @@ router.get('/listAllGame', async (request, response, next) => {
 router.post('/create', async (request, response, next) => {
     const name = request.body.name
     const initialData = request.body.initialData
-    if (name == "" || name == null || initialData == "" || initialData == null) {
+    if (!name || !initialData) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
@@ -40,13 +40,13 @@ router.post('/create', async (request, response, next) => {
 })
 router.delete('/delete', async (request, response, next) => {
     const gameId = request.body.id
-    if (gameId == "" || gameId == null) {
+    if (!gameId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         const game = await Game.findById(gameId)
-        if (game == null || !game.enable) {
+        if (!game || !game.enable) {
             response.status(404).json({ message: "Game is not found" })
             return
         }
@@ -59,13 +59,13 @@ router.delete('/delete', async (request, response, next) => {
 })
 router.get('/info', async (request, response, next) => {
     const gameId = request.query.id
-    if (gameId == "" || gameId == null) {
+    if (!gameId) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
     try {
         const gameDocument = await Game.findById(gameId)
-        if (gameDocument == null || !gameDocument.enable) {
+        if (!gameDocument || !gameDocument.enable) {
             response.status(404).json({ message: "Game is not found" })
             return
         }
@@ -87,11 +87,11 @@ router.get('/info', async (request, response, next) => {
 
 function checkIfEventIsHappening(event) {
     const currentDate = Date.now()
-    return currentDate - Date.parse(event.startDate) >= 0 && Date.parse(event.endDate) - currentDate > 0
+    return currentDate - Date.parse(event.startDate) > 0 && Date.parse(event.endDate) - currentDate > 0
 }
 function checkIfEventIsComingUp(event) {
     const currentDate = Date.now()
-    return Date.parse(event.startDate) - currentDate > 0
+    return currentDate - Date.parse(event.startDate) < 0
 }
 
 module.exports = router
