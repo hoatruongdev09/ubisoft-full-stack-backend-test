@@ -47,6 +47,58 @@
             }
         })
     }
+    function openUpdateUserGameData(userId, gameId) {
+        console.log(`${userId}       ${gameId}`)
+        $.ajax({
+            type: 'get',
+            url: '/api/user/getUserGameData',
+            data: {
+                userId: userId,
+                gameId: gameId,
+            },
+            success: function(data,status,xhr) {
+                let html = "<div>"
+                        html += `<p>update data for game: ${gameId}</p>`
+                        html += `<input type="hidden" name="game-id" id="input-gameId" value="${gameId}"/>`
+                        html += `<input type="hidden" name="user-id" id="input-userId" value="${userId}"/>`
+                        html += `coin: <input type="number" name="user-id" id="input-coinNumber" value="${data.gameData.data.coin}"/> <br>`
+                        html += `star: <input type="number" name="user-id" id="input-starNumber" value="${data.gameData.data.star}"/> <br>`
+                        html += `<button onclick="updateUserGameData()">Update</button>`
+                        html += `<button onclick="$('#right-col').html('')">Close</button>`
+                    html += `</div>`
+                $('#right-col').html(html)
+            },
+            error: function(xhr,status,err){
+
+            }
+        })
+        
+    }
+    function updateUserGameData() {
+        let gameId = $('#input-gameId').val()
+        let userId = $('#input-userId').val()
+        let coin = $('#input-coinNumber').val()
+        let star = $('#input-starNumber').val()
+        
+        $.ajax({
+            type: 'patch',
+            url: '/api/user/updateUserGameData',
+            data: {
+                userId: userId,
+                gameId: gameId,
+                gameData: {
+                    coin: coin,
+                    star: star
+                }
+            },
+            success: function(data,status,xhr){
+                console.log(data)
+            },
+            error: function(xhr,status,err){
+
+            }
+        })
+    }
     function generateUserInfo(user){
         console.log(user)
         let html = ""
@@ -58,9 +110,9 @@
         }
         html += `<p>Game data: ${user.gameData.length}</p>`
         user.gameData.forEach(function(data){
-            html += `<p>id: ${data._id}</p>`
-            html += `<p>-- coin: ${data.data.coin}</p>`
-            html += `<p>-- star: ${data.data.star}</p>`
+            html += `<a href="#">id: ${data._id}</a>`
+            html += `<button onclick="openUpdateUserGameData('${user._id}','${data._id}')">Update</button>`
+            html += `<p>coin: ${data.data.coin} | star: ${data.data.star}</p>`
         })
         return html
     }

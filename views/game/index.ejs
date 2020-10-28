@@ -138,17 +138,15 @@
         let name = $('#input-gameName').val()
         let coin = $('#input-coin').val()
         let star = $('#input-star').val()
-        console.log(`${coin}; ${star}`)
         $.ajax({
             type: 'post',
             url: '/api/game/create',
-            dataType: 'JSON',
             data:{
                 name: name,
-                initialData: JSON.stringify( {
+                initialData: {
                     coin: coin,
                     star: star
-                })
+                }
             },
             success: function(data,status,xhr){
                 openListGame()
