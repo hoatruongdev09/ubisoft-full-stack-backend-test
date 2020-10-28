@@ -94,7 +94,6 @@ router.post('/registerGame', async (request, response, next) => {
             return
         }
         if (!user.gamesData) { user.gamesData = [] }
-        console.log(user.gamesData)
         let gameData = user.gamesData.find(game => game._id == gameId)
         if (gameData) {
             response.status(400).json({ message: "user registered this game" })
@@ -128,7 +127,7 @@ router.patch('/updateUserGameData', async (request, response, next) => {
     const userId = request.body.userId
     const gameId = request.body.gameId
     const gameData = request.body.gameData
-    if (!userId || !gameId || !gameData) {
+    if (!userId || !gameId || !gameData || isNaN(gameData.coin) || isNaN(gameData.star)) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }

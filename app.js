@@ -10,7 +10,7 @@ const userRoutes = require('./routes/api/user')
 const homeRoutes = require('./routes/web/home')
 const webUserRoutes = require('./routes/web/user')
 const webGameRoutes = require('./routes/web/game')
-
+const webEventRoutes = require('./routes/web/events')
 const app = express()
 
 mongoose.connect("mongodb://localhost:27017/portal_game_test", {
@@ -26,6 +26,7 @@ app.use(bodyParser.json())
 app.use('/', homeRoutes)
 app.use('/web/user', webUserRoutes)
 app.use('/web/game', webGameRoutes)
+app.use('/web/event', webEventRoutes)
 
 app.use('/api/game', gameRoutes)
 app.use('/api/event', eventRoutes)

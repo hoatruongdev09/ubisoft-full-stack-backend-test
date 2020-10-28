@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager</title>
+    <%- include('../layouts/page_import') %> 
+</head>
+<script>
+    function openListEvent() {
+        $.ajax({
+            method: 'get',
+            url: '/api/event/listAllEvent',
+            success: function (data,status,xhr){
+                $('#left-col').html(generateEventTable(data.events))
+            },
+            error: function (xhr,status,err) {
+
+            }
+        })
+    }
+    function openEventInfo(eventId){
+        $.ajax({
+            type: 'get',
+            url: '/api/event/get',
+            data: {eventId : eventId},
+            success: function(data,status,xhr){
+                console.log(data)
+                $('#right-col').html(generateEventInfo(data))
+            },
+            error: function(xhr,status,err){
+
+            }
+        })
+    }
+    function generateEventInfo(event){
+        console.log(event)
+        let html = ""
+        html += `<p>Event Name: ${event.name}</p>`
+        html += `<p>Game ID: ${event.game}</p>`
+        html += `<p>Start Date: ${new Date(event.startDate).toDateString()}</p>`
+        html += `<p>End Date: ${new Date(event.endDate).toDateString()}</p>`
+        html += `<p>Reward: ${event.reward.star} stars</p>`
+        if(event.rewardedUsers.length == 0) {
+            html += `<p>Rewarded players: empty </p>`
+        } else {
+            html += `<p>Rewarded players: ${event.rewardedUsers.length} </p>`
+            event.rewardedUsers.forEach(function(userID){
+                html += `<p>- User ID: ${userID} </p>`
+            })
+        }
+
+        return html
+    }
+    function openCreateEventPanel() {
+        let html = "<div>"
+            html += `Event Name: <input type="text" name="input-eventName" id="input-eventName" /> <br>`
+            html += `Game ID: <input type="text" name="input-gameId" id="input-gameId" /> <br>`
+            html += `Start Date: <input type="date" name="input-startDate" id="input-startDate" /> <br>`
+            html += `End Date: <input type="date" name="input-endDate" id="input-endDate" /> <br>`
+            html += `<p>Reward: </p><br>`
+            html += `Stars: <input type="number" name="input-star" id="input-rewardStar" /> <br>`
+            html += `<button onclick="createNewEvent()">Create</button>`
+            html += `<button onclick="$('#create-panel').html('')">Close</button>`
+            html += `</div>`
+        $('#create-panel').html(html)
+    }
+    function createNewEvent(){
+        let gameId = $('#input-gameId').val()
+        let eventName = $('#input-eventName').val()
+        let startDate = $('#input-startDate').val()
+        let endDate = $('#input-endDate').val()
+        let rewardStar = $('#input-rewardStar').val()
+        $.ajax({
+            type: 'post',
+            url: '/api/event/create',
+            data: {
+                name: eventName,
+                gameId: gameId,
+                startDate: startDate,
+                endDate: endDate,
+                rewardStar: rewardStar
+            },
+            success: function(data, status,xhr){
+                openListEvent()
+            },
+            error: function(xhr,status,err){
+                console.log(xhr)
+            }
+        })
+    }
+    function deleteEvent(eventId){
+        $.ajax({
+            type: 'delete',
+            url: '/api/event/delete',
+            data: {eventId : eventId},
+            success: function(data,status,xhr){
+                console.log(xhr)
+                openListEvent()
+            },
+            error: function(xhr,status,err){
+                console.log(err)
+            }
+        })
+    }
+    function generateEventTable(listEvents) {
+        let html = "<table>"
+        html += "<tr>"
+            html += "<th>event id</th>"
+            html += "<th>game id</th>"
+            html += "<th>name</th>"
+            html += "<th></th>"
+            html += "<th></th>"
+        html += "</tr>"
+
+        listEvents.forEach(function(event){
+            html+="<tr>"
+                    html+=`<td>${event._id}</td>`
+                    html+=`<td>${event.game}</td>`
+                    html+=`<td>${event.name}</td>`
+                    html+=`<td><button onclick="openEventInfo('${event._id}')">info</button></td>`
+                    html+=`<td><button onclick="deleteEvent('${event._id}')">delete</button></td>`
+            html+="</tr>"
+        })
+        html += "</table>"
+        return html
+    }
+</script>
+<body>
+    <%- include('../layouts/navigator') %> 
+    <div>
+        <h3>Event Manager</h3>
+        <button onclick="openListEvent()">list event</button>
+        <button onclick="openCreateEventPanel()">create event</button>
+    </div>
+    <div class="container-fluid">
+        <div class="row" id="create-panel">
+
+        </div>
+        <div class="row">
+            <div class="col-md-6" id="left-col">
+
+            </div>
+            <div class="col-md-6" id="right-col"></div>
+        </div>
+    </div>
+</body>
+</html>

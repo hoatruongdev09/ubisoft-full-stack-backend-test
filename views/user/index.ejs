@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>User Manager</title>
     <%- include('../layouts/page_import') %> 
 </head>
 <script>
@@ -95,7 +95,7 @@
                 console.log(data)
             },
             error: function(xhr,status,err){
-
+                console.log(err)
             }
         })
     }
@@ -103,15 +103,15 @@
         console.log(user)
         let html = ""
         html += `<p>User name: ${user.name}</p>`
-        html += `<p>Last Online: ${user.recentLoginTime}</p>`
+        html += `<p>Last Online: ${new Date(user.recentLoginTime).toDateString()}</p>`
         if(user.gameData == null || user.gameData.length == 0){
             html += `<p>Game data: empty</p>`
             return html
         }
         html += `<p>Game data: ${user.gameData.length}</p>`
         user.gameData.forEach(function(data){
-            html += `<a href="#">id: ${data._id}</a>`
-            html += `<button onclick="openUpdateUserGameData('${user._id}','${data._id}')">Update</button>`
+            html += `<a>Game ID: ${data._id}</a>`
+            html += `  <button onclick="openUpdateUserGameData('${user._id}','${data._id}')">Update</button>`
             html += `<p>coin: ${data.data.coin} | star: ${data.data.star}</p>`
         })
         return html
@@ -123,6 +123,7 @@
             html += "<th>name</th>"
             html += "<th></th>"
             html += "<th></th>"
+            html += "<th></th>"
         html += "</tr>"
 
         listUsers.forEach(function(user){
@@ -131,10 +132,91 @@
                     html+=`<td>${user.name}</td>`
                     html+=`<td><button onclick="openUserInfo('${user._id}')">info</button></td>`
                     html+=`<td><button onclick="deleteUser('${user._id}')">delete</button></td>`
+                    html+=`<td><button onclick="openRegisterGame('${user._id}')">register game</button></td>`
+                    html+=`<td><button onclick="openGetEventReward('${user._id}')">get event reward</button></td>`
             html+="</tr>"
         })
         html += "</table>"
         return html
+    }
+    function registerGame(userId, gameId){
+        $.ajax({
+            type:'post',
+            url: '/api/user/registerGame',
+            data: {
+                userId: userId,
+                gameId: gameId
+            },
+            success: function(data,status,xhr){
+                openUserInfo(userId)
+            },
+            error: function(xhr,status,err){
+                console.log(xhr.responseJSON.message)
+            }
+        })
+    }
+    function openRegisterGame(userId){
+        $.ajax({
+            method: 'get',
+            url: '/api/game/listAllGame',
+            success: function (data,status,xhr){
+                let html = `
+                    <p>Register game for user: ${userId}</p>
+                    <p>Choose game</p>
+                `
+                data.games.forEach(function(game){
+                    html += `Game ID: <a>${game._id}</a> <button onclick="registerGame('${userId}','${game._id}')">Register this game</button><br>`
+                })
+                html += `
+                    <br><button onclick=" $('#right-col').html('')">Close</button>
+                `
+                 $('#right-col').html(html)
+            },
+            error: function (xhr,status,err) {
+
+            }
+        })
+    }
+    function getReward(userId, eventId){
+        $.ajax({
+            type: 'get',
+            url: '/api/event/rewardPlayer',
+            data: {
+                userId: userId,
+                eventId: eventId
+            },
+            success: function(data,status,xhr){
+                openUserInfo(userId)
+            },
+            error: function(xhr,status,err){
+
+            }
+        })
+    }
+    function openGetEventReward(userId){
+        $.ajax({
+            method: 'get',
+            url: '/api/event/listAllEvent',
+            success: function (data,status,xhr){
+                let html = `
+                    <p>Get Event For User: ${userId}</p>
+                    <p>Choose completed events</p>
+                `
+                data.events.forEach(function(event){
+                    if(new Date(event.endDate) - Date.now() < 0 && !event.rewardedUsers.includes(userId)){
+                        html += `Game ID: <p>${event.game}</p>`
+                        html += `Event ID: <a>${event._id}</a> <button onclick="getReward('${userId}','${event._id}')">Get reward</button><br>`
+                    }
+                })
+                html += `
+                    <br><button onclick=" $('#right-col').html('')">Close</button>
+                `
+                 $('#right-col').html(html)
+            },
+            error: function (xhr,status,err) {
+
+            }
+        })
     }
     function createUser(){
         let userName = $('#input-username').val()

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Game Manager</title>
     <%- include('../layouts/page_import') %> 
 </head>
 <script>
@@ -97,25 +97,25 @@
     function generateGameInfo(game){
         let html = ""
             html += `<p>Name: ${game.name}</p>`
-            html += `<p>initial Data:</p>`
-            html += `<p>-- coin: ${game.initialData.coin}</p>`
-            html += `<p>-- coin: ${game.initialData.star}</p>`
+            html += `<p>Initial Data:</p>`
+            html += `<p>-- Coin: ${game.initialData.coin}</p>`
+            html += `<p>-- Star: ${game.initialData.star}</p>`
             if(game.happeningEvent.length == 0) {
-                html += `<p>happening event: empty</p>`
+                html += `<p>Happening Events: empty</p>`
             } else {
-                html += `<p>happening event: ${game.happeningEvent.length}</p>`
+                html += `<p>Happening Events: ${game.happeningEvent.length}</p>`
                 game.happeningEvent.forEach(function(event){
-                    html += `<p>-- id: ${event._id}, name: ${event.name}</p>`
-                html += `<p>-- start date ${event.startDate}, end date: ${event.endDate} </p>`
+                    html += `<p>-- Event ID: ${event._id}, Name: ${event.name}</p>`
+                    html += `<p>---- Start Date ${new Date(event.startDate).toDateString()}, End Date: ${new Date(event.endDate).toDateString()} </p>`
                 })
             }
             if(game.comingUpEvent.length == 0) {
-                html += `<p>coming up event: empty</p>`
+                html += `<p>Coming up Events: empty</p>`
             } else {
-                html += `<p>coming event: ${game.comingUpEvent.length}</p>`
+                html += `<p>Coming up Events: ${game.comingUpEvent.length}</p>`
                 game.comingUpEvent.forEach(function(event){
-                    html += `<p>-- id: ${event._id}, name: ${event.name}</p>`
-                    html += `<p>-- start date ${event.startDate}, end date: ${event.endDate} </p>`
+                    html += `<p>-- Event ID: ${event._id}, Name: ${event.name}</p>`
+                    html += `<p>---- Start Date ${new Date(event.startDate).toDateString()}, End Date: ${new Date(event.endDate).toDateString()} </p>`
                 })
             }
         return html

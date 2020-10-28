@@ -109,7 +109,7 @@ router.post('/create', async (request, response, next) => {
     const rewardStar = request.body.rewardStar
     const name = request.body.name
     console.log(`${name} ${rewardStar} ${startDate} ${endDate} ${gameId}`)
-    if (!gameId || !endDate || !rewardStar || !name) {
+    if (!gameId || !endDate || !rewardStar || !name || isNaN(rewardStar)) {
         response.status(400).json({ message: "parameter not valid" })
         return
     }

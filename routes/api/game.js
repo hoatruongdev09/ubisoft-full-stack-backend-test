@@ -18,7 +18,7 @@ router.get('/listAllGame', async (request, response, next) => {
 router.post('/create', async (request, response, next) => {
     const name = request.body.name
     const initialData = request.body.initialData
-    if (!name || !initialData) {
+    if (!name || !initialData || isNaN(initialData.coin) || isNaN(initialData.star)) {
         response.status(400).json({ message: "Parameter is not valid" })
         return
     }
