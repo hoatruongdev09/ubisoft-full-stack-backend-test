@@ -1,4 +1,29 @@
 # ubisoft-full-stack-backend-test
+## SET UP
+This project use NodeJS and MongoDB <br>
+To run this project please install:
+* NodeJS from https://nodejs.org/en/download/ <br>
+* MongoDB from https://docs.mongodb.com/manual/administration/install-community/
+
+[//]: # (Hello)
+Run steps
+1. Clone this repository
+1. Open terminal right in repository folder
+1. Please run 'npm install' to install neccessary depenendcies
+1. Run 'npm start' to run app
+
+#### To change database:
+Edit the connection string in <b>line 16</b> file <b>app.js</b>
+```javascript
+
+const connectionString = `your MongoDB connection string`
+
+
+```
+## FRONTEND
+Connect "/web" to access web client, it provides CRUD tools to insert and modify data
+<br>Example: "localhost:8080/web"
+## BACKEND
 
 #### Provide an API to know all the game information and upcoming events: (GET) "/api/game/info"
 * Parameter:
@@ -121,27 +146,5 @@ Expect Result:
 }
 ```
 
-## FRONTEND
-Connect "/web" to access web client, it provides CRUD tools to insert and modify data
-<br>Example: "localhost:8080/web"
-## SET UP
-This project use NodeJS and MongoDB <br>
-To run this project please install:
-* NodeJS from https://nodejs.org/en/download/ <br>
-* MongoDB from https://docs.mongodb.com/manual/administration/install-community/
-
-[//]: # (Hello)
-Run steps
-1. Clone this repository
-1. Open terminal right in repository folder
-1. Please run 'npm install' to install neccessary depenendcies
-1. Run 'npm start' to run app
-
-#### To change database:
-Edit the connection string in <b>line 16</b> file <b>app.js</b>
-```javascript
-
-const connectionString = `your MongoDB connection string`
 
 
-```
