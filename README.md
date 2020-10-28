@@ -1,4 +1,4 @@
-# ubisoft-full-stack-backend-test
+# Ubisoft Junior Full-stack Backend Test
 ## SET UP
 This project use NodeJS and MongoDB <br>
 To run this project please install:
@@ -13,7 +13,9 @@ Run steps
 1. Run 'npm start' to run app
 
 #### To change database:
-Edit the connection string in <b>line 16</b> file <b>app.js</b>
+You can use default DB connection in application to reuse test data <br>
+Or <br>
+Use your own by edit the connection string in <b>line 16</b> file <b>app.js</b>
 ```javascript
 
 const connectionString = `your MongoDB connection string`
