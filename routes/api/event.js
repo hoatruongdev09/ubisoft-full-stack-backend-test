@@ -33,8 +33,6 @@ router.get('/rewardPlayer', async (request, response, next) => {
             response.status(400).json({ message: "user received the reward" })
             return
         }
-        console.log(user.gamesData)
-        console.log(event)
         let game = null
         for (let i = 0; i < user.gamesData.length; i++) {
             if (user.gamesData[i]._id.equals((event.game))) {
@@ -108,7 +106,6 @@ router.post('/create', async (request, response, next) => {
     const endDate = request.body.endDate
     const rewardStar = request.body.rewardStar
     const name = request.body.name
-    console.log(`${name} ${rewardStar} ${startDate} ${endDate} ${gameId}`)
     if (!gameId || !endDate || !rewardStar || !name || isNaN(rewardStar)) {
         response.status(400).json({ message: "parameter not valid" })
         return

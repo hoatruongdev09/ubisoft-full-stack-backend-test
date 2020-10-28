@@ -174,7 +174,6 @@ router.get('/getUserGameData', async (request, response, next) => {
     }
     try {
         let user = await User.findById(userId)
-        console.log('user: ', user)
         if (user == null || !user.enable) {
             response.status(404).json({ message: "user not found" })
             return
