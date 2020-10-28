@@ -13,7 +13,9 @@ const webGameRoutes = require('./routes/web/game')
 const webEventRoutes = require('./routes/web/events')
 const app = express()
 
-mongoose.connect(`mongodb+srv://test26102020:strongPassword123@ubisoft-gameportal-test.1ggep.mongodb.net/portal_game_test?retryWrites=true&w=majority`, {
+const connectionString = `mongodb+srv://test26102020:strongPassword123@ubisoft-gameportal-test.1ggep.mongodb.net/portal_game_test?retryWrites=true&w=majority`
+
+mongoose.connect(connectionString, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
